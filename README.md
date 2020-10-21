@@ -31,11 +31,15 @@ IPFire permite la instalación de software adicional a través de plugins, algun
 
 IPFire también es compatible con arquitecturas ARM, es decir, es compatible con Raspberry PI o equipos similares. IPFire se puede descargar desde su página web principal de forma totalmente gratuita.
 
-Podemos descargarlo de manera gratuita desde su página ofical https://www.ipfire.org/
+Podemos descargarlo de manera gratuita desde su [página ofical.](https://www.ipfire.org/)
 
-[^Referencias:
+<small>
+Referencias:
+
 https://www.redeszone.net/ipfire/
-https://latam.kaspersky.com/resource-center/definitions/utm]
+
+https://latam.kaspersky.com/resource-center/definitions/utm
+</small>
 
 ### Instalación de IPFire
 
@@ -202,7 +206,9 @@ Este es el esquema de red que vamos a utilizar en esta serie de artículos.
 ![descarga ipfire](img/ipfire001.jpg)
 
 Para la administración de IPFire se van a utilizar las interfaces "RED" y "GREEN", obviamente esta tarea se puede llevar a cabo en la propia máquina física ;-).
-###La interfaz "GREEN"
+
+## La interfaz "GREEN"
+
 La interfaz "GREEN" es la que utilizaremos para la administración de IPFire de manera local, vía "https" y desde el navegador. Yo voy a utilizar Firefox pero podéis utilizar el que más os guste.
 Para acceder debemos utilizar la ip que asignamos a "GREEN" y el puerto 444 que es el que IPFire establece por defecto (podemos asignar el que queramos).
 La primera pantalla que nos aparece es una alerta de conexión no segura que tiene relación con los certificados, en este caso no hay que preocuparse ya que es nuestro sistema. Pinchamos en avanzado, entendemos los riesgos y queremos continuar y confirmamos la excepción de seguridad para este sitio.
@@ -222,7 +228,7 @@ Estamos dentro!!
 Si navegamos por los distintos menús podemos ver las posivilidades que nos brinda IPFire, desde opciones de confiración de la red, sistema de estado y logs, implementación de servicios como OpenVPN que veremos en próximos artículos o la [actualización del sistema y la implementación de módulos.](http://systembackdoors.blogspot.com/2013/09/actualizacion-y-addons-para-ipfire.html)
 Desde este panel de control podemos administrar y configurar la mayor parte de las opciones que nos da el sistema pero para otro tipo de configuraciones o modificaciones más avanzadas las tendremos que gestionar desde la propia máquina o vía ssh.
 
-### La interfaz "RED"
+## La interfaz "RED"
 
 La interfaz "RED" nos conecta con el exterior, es decir, la conexión que nos da nuestro ISP, nuestra línea MPLS, ADSL, Modem o el tipo de conexión que utilicemos para este fin. Esta interfaz la utilizaremos para una administración vía SSH y podremos accederla desde cualquier lugar con conexión a internet.
 Desde la red "GREEN" también podemos acceder vía ssh pero sólo en local.
@@ -277,10 +283,12 @@ Utilizar una VPN nos permite navegar através de una Wifi pública de una manera
 En el mundo empresarial las VPNs son utilizadas para interconectar sedes o permitir teletrabajar de forma segura estando conectados a la red privada de la empresa.
 Si quieres conocer más sobre los tipos de VPN y sus protocolos echa un vistazo a [este artículo](http://rcg-comunicaciones.com/tipos-de-vpn-y-sus-protocolos/)
 
-###¿Qúe es OpenVPN?
+## ¿Qúe es OpenVPN?
+
 OpenVPN es un sistema VPN del tipo cliente/servidor multiplataforma, compatible con sistemas Microsoft Windows, GNU/Linux, MacOS y con aplicaciones para iOS y Android. Es un sistema Open Source con licencia GPL aunque también dispone de versiones de pago.
 
-###Configuración servidor OpenVPN en IPFire
+### Configuración servidor OpenVPN en IPFire
+
 Para la configuración de OpenVPN vamos a utilizar la interfaz del navegador, con lo que iniciamos sesión y en la pestaña servicios seleccionamos OpenVPN.
 Como podemos observar el servicio está detenido y vamos a tener que añadir cierta información obligatoria para poder arrancarlo.
 
@@ -298,28 +306,50 @@ El resto sólo he modificado lo que está marcado pero explicaré un poco que es
 - <b>Puerto de destino:</b> Es el puerto utilizado por el protocolo y el que se utiliza para la comunicación remota. Puede ser cambiado pero debemos asegurarnos que el que pongamos no esté siendo utilizado por otro servicio. Este el puerto que debemos utilizar en el router si necesitásemos realizar un mapeo.
 - <b>Encripción = Cifrado:</b> Aquí elegiremos el tipo de cifrado para nuestro canal de comunicación. Aquí puedes [leer más](https://www.redeszone.net/2016/12/27/openvpn-2-4-soportara-aead-con-aes-gcm-por-que-esto-es-importante/?utm_source=related_posts&utm_medium=manual) sobre esto. Yo he elegido AES-GCM (256 bit) por ser el más seguro.
 - <b>Static IP address pools:</b>Desde aquí podemos crear otras subredes diferentes a la que hemos creado por defecto (80.80.80.0/24), cuando generemos los certificados para los clientes veremos mejor su utilización.
-- ![descarga ipfire](img/openvpn1-2.jpg)
+
+  ![descarga ipfire](img/openvpn1-2.jpg)
+
 - <b>Opciones avanzadas de servidor:</b>
   - <b>Opciones DHCP.</b> Aquí se pueden ajustar los parámetros DHCP extendidos, estos parámetros son utilizados principalmente por los clientes Windows.
     - <b>Dominio</b> El sufijo DNS se puede configurar con un nombre.
     - <b>DNS</b> Podemos añadir un servidor DNS.
     - <b>WINS</b> Establece el servidor primario WINS.
     - <b>Route push options</b> Esta opción permite añadir rutas adiccionales a otras subredes a parte de la predeterminada "GREEN". Lo que viene a ser NAT o routing entre redes.
-- <b>Opciones varias</b> - <b>Client-To-Client</b> - Esta opción hace posible que los clientes de OpenVPN puedan comunicarse entre sí. Mediante el uso de diferentes subredes, se deben utilizar las "Opciones de empuje de ruta" mencionadas anteriormente para hacer que las diferentes subredes sean accesibles entre sí. - <b>Redirect-Gateway def1</b> - Dirige todo el tráfico IP a través del cliente VPN (por ejemplo, navegador web). - <b>Configuración adicional</b> - Ofrece la posibilidad de ampliar el servidor pero también la configuración del cliente con directivas individuales. Si se activa dos archivos de configuración más llamados server.conf.local y client.conf.local, que se encuentran bajo la ruta /var/ipfire/ovpn/scripts, serán leídos y escritos en el server.conf original y/o el respectivo client.ovpn. - <b>mssfix</b>[max] - Se utiliza para paquetes TCP que se envían a través de un túnel UDP. La conexión TCP se entrega con el tamaño máximo del paquete en bytes. A menos que no se edite ningún otro valor en el archivo de configuración, mssfix utiliza el mismo valor que fragment. - <b>fragment</b> - Fragmenta los paquetes UDP no cifrados que se enviarán a través del túnel hasta el tamaño máximo de bytes del paquete. La cabecera UDP no está incluida. Esta opción sólo funciona con túneles UDP. Para desactivar "fragment" el valor del campo debe estar vacío. - <b>Max-Clients</b> - Limita el número de clientes con conexiones paralelas (por defecto 100) . - <b>Keepalive</b> - Se usa para controlar el túnel y mantenerlo con ping y ping-restart vivo.
-  **Nota: Los ajustes de mssfix y fragment deben realizarse una sola vez y no modificarse ya que si la configuración no es igual en el servidor y el cliente la conexión fallará. Es decir que si por alguna razón después de tener funcionando los clientes tuviésemos que modificar estos parámetros tendríamos que generar de nuevo los clientes y volver a instalarlos. "mssfix" y "fragmento" sólo deben utilizarse con el protocolo UDP; el TCP sólo debe estar regulado por el tamaño de la MTU.**
+- <b>Opciones varias:</b>
+- <b>Client-To-Client</b> - Esta opción hace posible que los clientes de OpenVPN puedan comunicarse entre sí. Mediante el uso de diferentes subredes, se deben utilizar las "Opciones de empuje de ruta" mencionadas anteriormente para hacer que las diferentes subredes sean accesibles entre sí.
+- <b>Redirect-Gateway def1</b> - Dirige todo el tráfico IP a través del cliente VPN (por ejemplo, navegador web).
+- <b>Configuración adicional</b>- Ofrece la posibilidad de ampliar el servidor pero también la configuración del cliente con directivas individuales. Si se activa dos archivos de configuración más llamados server.conf.local y client.conf.local, que se encuentran bajo la ruta /var/ipfire/ovpn/scripts, serán leídos y escritos en el server.conf original y/o el respectivo client.ovpn.
+- <b>mssfix</b>[max] - Se utiliza para paquetes TCP que se envían a través de un túnel UDP. La conexión TCP se entrega con el tamaño máximo del paquete en bytes. A menos que no se edite ningún otro valor en el archivo de configuración, mssfix utiliza el mismo valor que fragment.
+- <b>fragment</b> - Fragmenta los paquetes UDP no cifrados que se enviarán a través del túnel hasta el tamaño máximo de bytes del paquete. La cabecera UDP no está incluida. Esta opción sólo funciona con túneles UDP. Para desactivar "fragment" el valor del campo debe estar vacío.
+- <b>Max-Clients</b> - Limita el número de clientes con conexiones paralelas (por defecto 100) .
+- <b>Keepalive</b> - Se usa para controlar el túnel y mantenerlo con ping y ping-restart vivo.
+
+  ```
+  Nota: Los ajustes de mssfix y fragment deben realizarse una sola vez y no modificarse ya que si la configuración no es igual en el servidor y el cliente la conexión fallará. Es decir que si por alguna razón después de tener funcionando los clientes tuviésemos que modificar estos parámetros tendríamos que generar de nuevo los clientes y volver a instalarlos. "mssfix" y "fragmento" sólo deben utilizarse con el protocolo UDP; el TCP sólo debe estar regulado por el tamaño de la MTU.
+  ```
+
 - <b>Opciones de archivo de registro</b>
+
   - <b>verb</b> - Define el nivel de depuración.
     La escala de valores va de 0 a 11. De esta manera, los diferentes procesos de la conexión OpenVPN son minuciosos y pueden ser utilizados para la depuración o la optimización.
+
     Habrá diferentes secuencias de la conexión OpenVPN registradas y se pueden utilizar para depurar u optimizar. El valor por defecto se establece en el nivel 3, lo que proporciona una buena visión general de la conexión (interfaz, enrutamiento, encriptación, etc.).
+
     Con un modo verbose de 6 no es posible un uso normal del servidor. Las Modalidades 6 y superiores están pensadas para propósitos de depuración.
+
 - <b>Opciones Criptográficas</b>
+
   - <b>Hash algorithm</b> - El algoritmo hash (directiva -auth) definido aquí se utiliza para asegurar la integridad de los paquetes IP que pertenecen al canal de datos y que serán probados por la función de un llamado código de autenticación de mensajes Hash (HMAC). Esta autenticación sirve a la integridad de los datos y evita una manipulación de los mismos. Se recomienda utilizar SHA-256 o superior.
+
   - <b>HMAC tls-auth</b> - TLS-Authentication utiliza el mismo algoritmo configurado anteriormente, aunque de forma diferente. Mediante el uso de esta opción, una clave estática de 2048 bits es responsable de firmar cada paquete OpenVPN con una firma adicional basada en hash. Esta es una protección adicional para DoS o ataques de repetición, pero también puede ser útil contra errores de programación (por ejemplo, bufferoverflows) de las librerías criptográficas en nuestro caso en la librería OpenSSL.
-- ![descarga ipfire](img/openvpn1-3.jpg)
+
+  ![descarga ipfire](img/openvpn1-3.jpg)
+
 - ###### Referencia 1: https://wiki.ipfire.org/configuration/services/openvpn/config/static_ip
 - ###### Referencia 2: https://wiki.ipfire.org/configuration/services/openvpn/config/advanced_set
 
-###Generación de claves y certificados
+## Generación de claves y certificados
+
 El primer paso en la construcción de una configuración de claves en OpenVPN es establecer una PKI (infraestructura de clave pública). La PKI consta de:
 
 - un certificado independiente (también conocido como una clave pública) y la clave privada para el servidor y cada cliente, y
@@ -330,10 +360,13 @@ Tanto el servidor como el cliente se autenticarán primeramente verificando que 
 Este modelo de seguridad presenta las siguientes ventajas:
 
 - El servidor sólo necesita su propio certificado/clave - no es necesario que conozca los certificados individuales de cada cliente que pueda conectarse.
+
 - El servidor sólo aceptará a clientes cuyos certificados fueron firmados con el certificado principal (CA) de la entidad emisora cuya generación veremos más adelante. Y debido a que el servidor puede realizar esta comprobación de la firma sin necesidad de acceso a la clave privada de la entidad emisora de certificados, es posible que la clave de entidad emisora de certificados (la clave más sensible en toda la estructura PKI) resida en una máquina completamente diferente, incluso sin una conexión de red con los elementos de la VPN.
+
 - Si una clave privada está en peligro, puede desactivarse añadiéndose a una CRL (lista de revocación de certificados). La CRL permite rechazar certificados comprometidos de forma individual sin necesidad de tener que regenerar o reconstruir toda la estructura de claves y certificados (PKI).
+
 - El servidor puede gestionar derechos de acceso específicos para diferentes clientes basados en los campos del certificado presentado, tales como el nombre común.
-  ######Fuente: https://www.davantel.com/user/image/generacif3n-de-claves-en-openvpn.pdf
+  ###### Fuente: https://www.davantel.com/user/image/generacif3n-de-claves-en-openvpn.pdf
 
 Dicho esto lo siguiente que haremos será generar los certificados y claves del servidor. Para ello damos a "Generar certificados root/host".
 
@@ -346,17 +379,28 @@ Esto nos lleva al siguiente apartado donde para poder generar los certificados y
 #### El parámetro Diffie-Hellman
 
 A partir del Core 123 ya NO es posible crear claves Diffie-Hellman con una longitud de 1024 bits porque se consideran inseguras.
+
 Es posible configurar la longitud del parámetro Diffie-Hellman con 2048, 3072 y 4096 bits.
+
 El sistema nos advierte que "la generación de parámetros Diffie-Hellman puede tomar mucho tiempo, particularmente 3072 y 4096 bits pueden tomar al menos varias horas". En mi caso con una configuración 4096 y sobre un sistema virtualizado ha sido de unos 5 - 10 minutos.
+
 Si nuestro sistema no dispone de muchos recursos podemos generarlos en otro sistema más potente e importarlos desde la función de carga de la página principal "subir certificado CA".
+
 IPFire también puede configurarse como cliente, por lo que se puede cargar un archivo PKCS12 (guardado opcionalmente con una contraseña).
+
 Si todo se ha realizado correctamente, el navegador nos devuelve a la página principal donde ya nos muestra las claves y certificados generados y la opción de agregar nuevos clientes que será nuestro siguiente paso.
+
 Para el [uso extendido de CA y Keys](https://wiki.ipfire.org/configuration/services/openvpn/config/upload_gen)
+
 Si te interesa la criptografía y quieres conocer más sobre [el protocolo Diffie-Hellman](https://es.wikipedia.org/wiki/Diffie-Hellman).
 
 ![descarga ipfire](img/openvpn3.jpg)
 
-####Generar claves y certificados cliente \***\*Importante: Recuerda que hay ciertos parámetros del servidor que si se modifican después de haber creado los certificados cliente estos han de volver a generarse. Repasa lo anteriormente visto.\*\***
+### Generar claves y certificados cliente
+
+```
+Importante: Recuerda que hay ciertos parámetros del servidor que si se modifican después de haber creado los certificados cliente estos han de volver a generarse. Repasa lo anteriormente visto.
+```
 
 Para generar o agregar los certificados que utilizaremos en los clientes simplemente tendremos que hacer click en "Agregar" en la parte de "Control y Status de conexión".
 Nos aparecerá un nuevo menú donde seleccionaremos uno de los siguientes tipos de conexión, nosotros elegiremos "Host-to-Net (Roadwarrior)".
@@ -364,25 +408,38 @@ Nos aparecerá un nuevo menú donde seleccionaremos uno de los siguientes tipos 
 ![descarga ipfire](img/openvpn4.jpg)
 
 Las conexiones Roadwarrior son conexiones de cliente a red (punto a red). Aquí, un único cliente se conectará con el servidor IPFire OpenVPN. Las conexiones VPN "RoadWarrior" están diseñadas para conectar una sola máquina a una red en lugar de conectar dos redes.
+
 Con OpenVPN, puedes tener un router conectado a otro a través de una conexión "Net-to-Net" (N2N). Esta conexión se establece al inicio (generalmente) y se mantiene en todo momento (siempre y cuando ambos enrutadores estén encendidos), conectando ambas redes a través de una conexión cifrada. Esto se utiliza comúnmente para conectar sucursales que pueden estar separadas geográficamente. Más [aquí](https://wiki.ipfire.org/configuration/services/openvpn/tls-server).
+
 La tercera opción nos da la posibilidad de subir un paquete cliente ".zip" ya configurado.
+
 En algunos casos, nos gustaría que una conexión Road Warrior tuviera acceso a una red remota a través de un N2N. Un ejemplo sería dar acceso de apoyo técnico a una sucursal sólo a través de una conexión "RoadWarrior" con la oficina principal. El soporte técnico sólo tendría acceso a una única red (la oficina central), pero a través de ella, podría acceder a las sucursales.
 
 La siguiente ventana se divide en tres apartados:
 
 - <b>Conexión:</b> Aquí indicaremos el nombre para el cliente y seleccionaremos la subred a la que pertenecerá.
   En nuestro caso aparecen dos subredes: la 80.80.80.0/24 que es la que pusimos por defecto en las configuraciones globales y la 60.60.60.0/24 que a modo de ejemplo he añadido desde "Static Ip address Pools". Con esto podremos separar zonas o departamentos y mediante reglas en el firewall controlar como interactuan entre ambas. Esto también asegurará que los clientes obtengan siempre la misma dirección IP. Por ejemplo, imaginemos que nuestro departamento de IT situado en Segovia y conectado a la subred "root 60.60.60.0/24" tiene que dar soporte a la sede de ventas situada en Madrid y conectada a la subred 80.80.80.0/24. Mediante el firewall podremos decirle al sistema que el equipo de IT tenga acceso al de ventas pero que el equipo de ventas no sepa ni que existe la subred IT.<br>
+
   ![descarga ipfire](img/openvpn5.jpg)<br><br>
+
 - <b>Autenticación:</b> Simplemete será rellenar los datos oportunos o bien subir un certificado que ya tengamos configurado.<br>
+
   ![descarga ipfire](img/openvpn6.jpg)<br><br>
+
 - <b>Advanced client options:</b>
+
   - <b>Redirect Gateway:</b> Dirige todo el tráfico IP de ese cliente específico a través de la VPN (por ejemplo, navegadores web). Si se establece esta directiva, el cliente puede acceder a todas las redes en el lado del servidor y las subredes definidas bajo el área "Client has access to these networks on IPFire's site" ya no serán consideradas.
+
   - <b>IPFire has access to these networks on the client's site:</b> Aquí añadiremos la red interna de los clientes si queremos que esté disponible. Esto se consigue a través de una directiva interna de enrutamiento. Si lo combinamos con una entrada de ruta en la configuración del servidor podremos tener acceso en ambas redes (cliente/servidor). Esto se conoce como IP_FORWARDING y es necesario para habilitar la red detrás del cliente (RoadWarrior) para la red del servidor OpenVPN. Para acceder solamente al cliente esto no es necesario.
+
   - <b>Client has access to these networks on IPFire's site:</b> Indicamos a que ruta de red tiene acceso el cliente. La opción "Ninguna" significa que el túnel puede ser construido, pero no tiene ningún efecto funcional para el cliente. Por lo tanto, en el lado del servidor se puede controlar quién tiene acceso cuándo y dónde.
+
   - <b>DNS1, DNS2. </b>Podemos añadir dos servidores DNS adicionales.
+
   - <b>WINS:</b> También se puede asignar un servidor WINS individual por cliente.
 
 ![descarga ipfire](img/openvpn7.jpg)<br><br>
+
 Una vez finalizada la configuración damos a "Guardar" y nos regresará a la ventana inicial donde podemos ver cómo se ha creado el cliente y la información correspondiente. Esto se debe hacer con cada cliente que queramos añadir.
 Para la instalación en la máquina cliente descargaremos el paquete ".zip" que incluirá los archivos necesarios para su configuración y que veremos en el siguiente artículo.
 
@@ -392,7 +449,9 @@ Para la instalación en la máquina cliente descargaremos el paquete ".zip" que 
 
 La instalación básica en Windows es rápida y sencilla. Una vez finalizada veremos una configuración más avanzada que consistirá en que la conexión se realice de manera automática al iniciar sesión y los cambios necesarios para poder unir este cliente a un domino en Windows Server a través de nuestra VPN.
 Lo primero será descargar el cliente desde la [página oficial de OpenVPN](https://openvpn.net/community-downloads/).<br>
-![descarga ipfire](img/openvpn9.jpg)<br><br>
+
+![descarga ipfire](img/openvpn9.jpg)<br>
+
 Ejecutamos para comenzar la instalación
 
 ![descarga ipfire](img/openvpn10.jpg)
@@ -446,13 +505,20 @@ Si todo ha ido bien el icono se mostrará en verde
 
 ![descarga ipfire](img/openvpn23.jpg)
 
-##Automatizando el cliente
+## Automatizando el cliente
+
 En este apartado vamos a ver unos puntos claves para el correcto funcionamiento y el arranque automático del servicio.
+
 Hasta ahora la cuenta con la que hemos trabajado tiene privilégios de administrador, pero lo normal (y sino debería serlo) es que la mayoría de los usuarios de los distintos departamentos que utilizan los equipos utilicen cuentas estándar limitadas en permisos por motivos de seguridad.
+
 OpenVPN necesita de ciertos privilegios para poder ejecutarse correctamente, por eso, si lo ejecutamos desde una cuenta estándar no conpletará la conexión. Para ello tendremos que ejecutarlo como servicio y añadir al usuario a un grupo OpenVPN con esos privilegios establecidos.
+
 Por otro lado si este equipo hay que añadirlo a un controlador de dominio, como es lógico este tendrá que tener comunicación con el.
+
 Anteriormente marcamos en la configuración de OpenVPN que se ejecutase al iniciar Windows. Esto lo que hace es ejecutar OpenVPN-GUI.exe y nos muestra el icono en la barra de tareas pero recordemos que para realizar la conexión debíamos hacerlo de forma manual.
+
 Los siguientes pasos que vamos a realizar son necesarios tanto para que la conexión ser realice de manera automática al inicial la sesión como para que OpenVPN funcione de manera correcta con un usuario estándar.
+
 Si recordamos las opciones que nos mostraba la instalación del cliente OpenVPN, podemos observar que una de ellas nos instala OpenVPN como servicio.
 
 ![descarga ipfire](img/openvpn24.jpg)
@@ -473,16 +539,27 @@ Ya sólo nos queda el último paso que es programar una tarea que se dispare cad
 Habrimos el programador de tareas `Ctrl+r` `taskschd.msc` y creamos una nueva tarea en el contenedor principal. Se nos habre una nueva ventana donde iremos configurando las distintas opciones:
 
 - <b>Pestaña General:</b> Aquí añadimos un nombre y una descripción, cambiamos el usuario actual por el grupo `OpenVPN` marcamos la casilla `Ejecutar con los privilegios más altos` y seleccionamos nuestra versión de sistema en el último desplegable.<br>
-  ![descarga ipfire](img/openvpn27.jpg)<br><br>
-- <b>Pestaña Desencadenadores:</b> Aquí indicaremos cuándo se debe lanzar la tarea.<br>
-  ![descarga ipfire](img/openvpn28.jpg)<br><br>
+
+  ![descarga ipfire](img/openvpn27.jpg)<br>
+
+- <b>Pestaña Desencadenadores:</b> Aquí indicaremos cuándo se debe lanzar la tarea.
+
+  ![descarga ipfire](img/openvpn28.jpg)<br>
+
 - <b>Pestaña Acciones:</b> Desde esta pestaña indicamos que queremos que se inicie el programa que se encuentra en la ruta `C:\Program Files\OpenVPN\bin\openvpn-gui.exe` y le añadimos como argumentos `--connect "%USERNAME%.ovpn"`. Con esto le estamos diciendo al programa que una vez se ejecute realice la conexión y que utilice la configuración de conexión del usuario que inicia sesión. Explico mejor esto último. Como recordaréis, al copiar los certificados en la máquina correspondiente, renombramos dichos archivos con el nombre del usuario al que pertenecían, pues bien, esto se hizo para esta parte ya que utilizando la variable de sistema `%USERNAME%` (su valor equivale al nombre de usuario) se utilizará su archivo de configuración `[usuario].ovpn`. Qué se consigue con esto. Imagina que esa máquina la utilizan tres usuarios distintos, utilizando este sistema sólo tendríamos que programar una tarea general. Tambien podemos añadir el argumento `--silent_connection 1` para que se realice la conexión en segundo plano sin mostrar nada.<br>
-  ![descarga ipfire](img/openvpn29.jpg)<br><br> -<b>Pestaña condiciones:</b> En esta pestaña desmarcamos todas las casillas.<br>
-  ![descarga ipfire](img/openvpn30.jpg)<br><br>
+
+  ![descarga ipfire](img/openvpn29.jpg)<br>
+
+- <b>Pestaña condiciones:</b> En esta pestaña desmarcamos todas las casillas.<br>
+
+  ![descarga ipfire](img/openvpn30.jpg)<br>
+
 - <b>Pestaña Configuración:</b> Sólo dejaremos marcada la primera opción.<br>
+
   ![descarga ipfire](img/openvpn31.jpg)<br><br>
-  Ya sólo nos queda reiniciar para probar si la conexión se realiza correctamente.
-  Podemos ver cómo la conexión nos crea un nuevo adaptador de red.
+
+Ya sólo nos queda reiniciar para probar si la conexión se realiza correctamente.
+Podemos ver cómo la conexión nos crea un nuevo adaptador de red.
 
 ![descarga ipfire](img/openvpn32.jpg)
 
@@ -490,14 +567,20 @@ Y si hacemos un `ipconfig` nos devuelve la configuración de los dos adaptadores
 
 ![descarga ipfire](img/openvpn33.jpg)
 
-#Pruebas de concepto
+# Pruebas de concepto
+
 Para probar las conexiones vamos a utilizar:
 
 - Un Server 2016 que actuará como controlador de dominio y que será nuestra red interna.
+
   ![descarga ipfire](img/pruebas-00.jpg)
+
 - Un Windows 10 que uniremos al dominio con un usuario estándar y que también tendrá comunicación con otra segunda red externa donde estará el Windows 7.
+
   ![descarga ipfire](img/pruebas-01.jpg)
+
 - Un Windows 7 en una segunda red externa que no se unirá al dominio pero tendrá comunicación con la LAN pero no con la de Windows 10.
+
   ![descarga ipfire](img/pruebas-02.jpg)
 
 ###### Nota: en las máquinas cliente se ha deshabilitado el firewall para probar el ping entre las distintas redes como una medida rápida, creo que no es necesario indicar qué sería lo correcto.
@@ -505,6 +588,7 @@ Para probar las conexiones vamos a utilizar:
 Hemos reiniciado W10 y vemos que la conexión nos da en verde así que procedemos a unir el equipo al dominio.
 
 ![descarga ipfire](img/pruebas-1.jpg)
+
 ![descarga ipfire](img/pruebas-2.jpg)
 
 Al reiniciar el equipo para terminar la unión al dominio e iniciar sesión con el nuevo usuario OpenVPN nos muestra un mensaje de error. Esto quiere decir que el inicio automático funciona correctamente pero que aun tenemos que añadir los certificados para que conecte.
